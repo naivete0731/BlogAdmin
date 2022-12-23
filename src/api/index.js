@@ -17,3 +17,10 @@ export const loginAPI = ({ username, password }) => {
     }
   })
 }
+
+export const getMenuListAPI = () => {
+  return request({
+    url: '/api/menus',
+    method: 'get'
+  })
+}
