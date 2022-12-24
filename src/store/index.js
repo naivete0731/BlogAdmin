@@ -13,7 +13,8 @@ export default new Vuex.Store({
     getToken (state) {
       return state.token
     },
-    nickname: state => state.userInfo.nickname
+    nickname: state => state.userInfo.nickname,
+    UserInfo: state => state.userInfo
   },
   mutations: {
     // 2. 更新 token 的 mutations函数

@@ -2,348 +2,536 @@
   <div>
     <div class="container-fluid">
       <el-row class="spannel_list" :gutter="10">
-        <el-col :sm="6" :xs="12">
-          <div class="spannel">
-            <em>10015</em><span>篇</span>
-            <b>总文章数</b>
-          </div>
+        <el-col :sm="6" :xs="24">
+          <el-card>
+            <i class="el-icon-news"></i>
+            <div>
+              <b>文章总数</b>
+              <count-to :start-val="0" :end-val="postCount" :duration="2600" class="card-panel-num" />
+            </div>
+          </el-card>
         </el-col>
-        <el-col :sm="6" :xs="12">
-          <div class="spannel scolor01">
-            <em>123</em><span>篇</span>
-            <b>日新增文章数</b>
-          </div>
+        <el-col :sm="6" :xs="24">
+          <el-card>
+            <i class="el-icon-connection"></i>
+            <div>
+              <b>分类总数</b>
+              <count-to :start-val="0" :end-val="cateCount" :duration="2600" class="card-panel-num" />
+            </div>
+          </el-card>
         </el-col>
-        <el-col :sm="6" :xs="12">
-          <div class="spannel scolor02">
-            <em>35</em><span>条</span>
-            <b>评论总数</b>
-          </div>
+        <el-col :sm="6" :xs="24">
+          <el-card>
+            <i class="el-icon-chat-dot-square"></i>
+            <div>
+              <b>评论总数</b>
+              <count-to :start-val="0" :end-val="commentCount" :duration="2600" class="card-panel-num" />
+            </div>
+          </el-card>
         </el-col>
-        <el-col :sm="6" :xs="12">
-          <div class="spannel scolor03">
-            <em>123</em><span>条</span>
-            <b>日新增评论数</b>
-          </div>
+        <el-col :sm="6" :xs="24">
+          <el-card>
+            <i class="el-icon-data-line"></i>
+            <div>
+              <b>博客存活时间</b>
+              <count-to :start-val="0" :end-val="postCount" :duration="2600" class="card-panel-num" />
+            </div>
+          </el-card>
         </el-col>
       </el-row>
     </div>
 
     <div class="container-fluid">
       <el-row class="curve-pie" :gutter="10">
-        <el-col :sm="16" :xs="16">
+        <el-col :sm="24" :xs="24">
           <div class="gragh_pannel" id="curve_show"></div>
-        </el-col>
-        <el-col :sm="8" :xs="8">
-          <div class="gragh_pannel" id="pie_show"></div>
         </el-col>
       </el-row>
     </div>
-
     <div class="container-fluid">
-      <div class="column_pannel" id="column_show"></div>
+      <el-row class="curve-pie" :gutter="10">
+        <el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
+          <div class="gragh_pannel" id="pie_show"></div>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
+          <div class="column_pannel" id="column_show"></div>
+        </el-col>
+        <el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
+          <div class="column_pannel" id="ze_show"></div>
+        </el-col>
+      </el-row>
+    </div>
+    <div class="container-fluid">
+      <div class="gragh_pannel" id="column1_show"></div>
     </div>
   </div>
 </template>
 
 <script>
+import { getPostCount, getCateCount, getCommentCount } from '@/api'
+import CountTo from 'vue-count-to'
 // echarts内部用的是命名导出 export const 变量名 多个
 import * as echarts from 'echarts'
+// import resize from './mixins/resize'
 // 在这里获取不到真实DOM，得在组件的mounted周期获取
 export default {
   name: 'my-home',
   data () {
     return {
-
+      postCount: 0,
+      cateCount: 0,
+      commentCount: 0
     }
+  },
+  components: {
+    CountTo
+  },
+  created () {
+    this.initAllCount()
   },
   mounted () {
     this.initCurveFn()
     this.picChartFn()
     this.columnChartFn()
+    this.zeChartFn()
+    this.botChartFn()
   },
   methods: {
     // 初始化面积图
     initCurveFn () {
       // 基于准备好的dom，初始化echarts实例
+
+      // const animationDuration = 3000
       const curveChart = echarts.init(document.getElementById('curve_show'))
       // 绘制图表
       // 数据源(模拟后台返回的数据)
-      const aListAll = [
-        { count: 36, date: '2019-04-13' },
-        { count: 52, date: '2019-04-14' },
-        { count: 78, date: '2019-04-15' },
-        { count: 85, date: '2019-04-16' },
-        { count: 65, date: '2019-04-17' },
-        { count: 72, date: '2019-04-18' },
-        { count: 88, date: '2019-04-19' },
-        { count: 64, date: '2019-04-20' },
-        { count: 72, date: '2019-04-21' },
-        { count: 90, date: '2019-04-22' },
-        { count: 96, date: '2019-04-23' },
-        { count: 100, date: '2019-04-24' },
-        { count: 102, date: '2019-04-25' },
-        { count: 110, date: '2019-04-26' },
-        { count: 123, date: '2019-04-27' },
-        { count: 100, date: '2019-04-28' },
-        { count: 132, date: '2019-04-29' },
-        { count: 146, date: '2019-04-30' },
-        { count: 200, date: '2019-05-01' },
-        { count: 180, date: '2019-05-02' },
-        { count: 163, date: '2019-05-03' },
-        { count: 110, date: '2019-05-04' },
-        { count: 80, date: '2019-05-05' },
-        { count: 82, date: '2019-05-06' },
-        { count: 70, date: '2019-05-07' },
-        { count: 65, date: '2019-05-08' },
-        { count: 54, date: '2019-05-09' },
-        { count: 40, date: '2019-05-10' },
-        { count: 45, date: '2019-05-11' },
-        { count: 38, date: '2019-05-12' }
-      ]
 
-      // 但是图标要求直接给数字的值, 所以要把对象的值取出来形成2个只有值的数组
-      const aCount = []
-      const aDate = []
-
-      for (let i = 0; i < aListAll.length; i++) {
-        aCount.push(aListAll[i].count)
-        aDate.push(aListAll[i].date)
-      }
-
-      // 面积图的echarts配置项(参考文档复制)
-      const chartopt = {
-        title: {
-          text: '月新增文章数', // 标题
-          left: 'center', // 位置居中
-          top: '10' // 标题距离容器顶部px
-        },
-        tooltip: { // 提示框组件
-          trigger: 'axis' // 坐标轴触发(鼠标放在坐标轴就能出提示框)
-        },
-        legend: { // 图例组件(每种颜色的意思)
-          data: ['新增文章'], // 图例文字解释(要和series里name对应)
-          top: '40' // 距离容器顶部px
-        },
-        toolbox: { // 工具栏
-          show: true, // 要显示
-          feature: { // 各工具配置项
-            mark: { show: true }, // 辅助线开关
-            dataView: { show: true, readOnly: false }, // 数据视图工具，可以展现当前图表所用的数据，编辑后可以动态更新。
-            magicType: { show: true, type: ['line', 'bar'] }, // 动态类型切换
-            restore: { show: true }, // 配置项还原
-            saveAsImage: { show: true } // 点击保存下载图片
+      const expectedData = [100, 120, 161, 134, 105, 160, 165]
+      const actualData = [120, 82, 91, 154, 162, 140, 145]
+      curveChart.setOption({
+        // mixins: [resize],
+        xAxis: {
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          boundaryGap: false,
+          axisTick: {
+            show: false
           }
         },
-        xAxis: [ // 水平轴显示
-          {
-            name: '日',
-            type: 'category',
-            boundaryGap: false, // 坐标轴两边留白策略 (不留白)
-            data: aDate // 水平轴上的数字数据 (时间)
-          }
-        ],
-        yAxis: [ // 垂直轴显示
-          {
-            name: '月新增文章数',
-            type: 'value' // 以series里的data值做划分段
-          }
-        ],
-        series: [ // 系列(控制图表类型和数据)
-          {
-            name: '新增文章',
-            type: 'line', // 折线图
-            smooth: true, // 是否平滑视觉引导线，默认不平滑，可以设置成 true 平滑显示
-            areaStyle: { type: 'default' }, // 区域填充样式。设置后显示成区域面积图。
-            itemStyle: { color: '#f80', lineStyle: { color: '#f80' } }, // 折线拐点标志的样式。
-            data: aCount // 真正数据源(用下标和x轴数组对应)
-          }
-        ],
-        grid: { // 直角坐标系内绘图网格
-          show: true,
-          x: 50, // grid 组件离容器偏移量, 左侧
-          x2: 50, // 右侧
-          y: 80, // 上
-          height: 220 // 高度
-        }
-      }
-
-      curveChart.setOption(chartopt)
-    },
-    // 设置饼状图
-    picChartFn () {
-      const oPie = echarts.init(document.getElementById('pie_show'))
-      const oPieopt = {
-        title: {
-          top: 10,
-          text: '分类文章数量比',
-          x: 'center'
+        grid: {
+          left: 10,
+          right: 10,
+          bottom: 20,
+          top: 30,
+          containLabel: true
         },
         tooltip: {
-          trigger: 'item', // 在图形上才会触发提示
-          formatter: '{a} <br/>{b} : {c} ({d}%)' // 提示的文字显示的格式
-          // a: 系列名
-          // b: 数据名
-          // c: 数值
-          // d: 百分比 (只有饼状图生效)
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          },
+          padding: [5, 10]
         },
-        color: ['#5885e8', '#13cfd5', '#00ce68', '#ff9565'], // 系列颜色
-        legend: { // 图例组件
-          x: 'center',
-          top: 65,
-          data: ['奇趣事', '会生活', '爱旅行', '趣美味'] // 每个部分对应的数据名(要和series里name对应)
-        },
-        toolbox: { // 工具箱
-          show: true,
-          x: 'center',
-          top: 35,
-          feature: {
-            mark: { show: true },
-            dataView: { show: true, readOnly: false },
-            magicType: {
-              show: true,
-              type: ['pie', 'funnel'],
-              option: {
-                funnel: {
-                  x: '25%',
-                  width: '50%',
-                  funnelAlign: 'left',
-                  max: 1548
-                }
-              }
-            },
-            restore: { show: true },
-            saveAsImage: { show: true }
+        yAxis: {
+          axisTick: {
+            show: false
           }
+        },
+        legend: {
+          data: ['expected', 'actual']
+        },
+        series: [{
+          name: 'expected',
+          itemStyle: {
+            normal: {
+              color: '#FF005A',
+              lineStyle: {
+                color: '#FF005A',
+                width: 2
+              }
+            }
+          },
+          smooth: true,
+          type: 'line',
+          data: expectedData,
+          animationDuration: 2800,
+          animationEasing: 'cubicInOut'
+        },
+        {
+          name: 'actual',
+          smooth: true,
+          type: 'line',
+          itemStyle: {
+            normal: {
+              color: '#3888fa',
+              lineStyle: {
+                color: '#3888fa',
+                width: 2
+              },
+              areaStyle: {
+                color: '#f3f8ff'
+              }
+            }
+          },
+          data: actualData,
+          animationDuration: 2800,
+          animationEasing: 'quadraticOut'
+        }]
+      })
+      // curveChart.setOption({
+      //   tooltip: {
+      //     trigger: 'axis',
+      //     axisPointer: {
+      //       type: 'cross',
+      //       label: {
+      //         backgroundColor: '#6a7985'
+      //       }
+      //     }
+      //   },
+      //   legend: {
+      //     data: ['Email', 'Video Ads', 'Direct', 'Search Engine']
+      //   },
+      //   toolbox: {
+      //     feature: {
+      //       saveAsImage: {}
+      //     }
+      //   },
+      //   grid: {
+      //     left: '3%',
+      //     right: '4%',
+      //     bottom: '3%',
+      //     containLabel: true
+      //   },
+      //   xAxis: [
+      //     {
+      //       type: 'category',
+      //       boundaryGap: false,
+      //       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      //     }
+      //   ],
+      //   yAxis: [
+      //     {
+      //       type: 'value'
+      //     }
+      //   ],
+      //   series: [
+      //     {
+      //       name: 'Email',
+      //       type: 'line',
+      //       stack: 'Total',
+      //       areaStyle: {},
+      //       emphasis: {
+      //         focus: 'series'
+      //       },
+      //       data: [120, 132, 101, 134, 90, 230, 210]
+      //     },
+      //     {
+      //       name: 'Union Ads',
+      //       type: 'line',
+      //       stack: 'Total',
+      //       areaStyle: {},
+      //       emphasis: {
+      //         focus: 'series'
+      //       },
+      //       data: [220, 182, 191, 234, 290, 330, 310]
+      //     },
+      //     {
+      //       name: 'Search Engine',
+      //       type: 'line',
+      //       stack: 'Total',
+      //       label: {
+      //         show: true,
+      //         position: 'top'
+      //       },
+      //       areaStyle: {},
+      //       emphasis: {
+      //         focus: 'series'
+      //       },
+      //       data: [820, 932, 901, 934, 1290, 1330, 1320]
+      //     }
+      //   ]
+      // })
+    },
+    picChartFn () {
+      const pieChart = echarts.init(document.getElementById('pie_show'))
+      pieChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        radar: {
+          radius: '66%',
+          center: ['50%', '42%'],
+          splitNumber: 8,
+          splitArea: {
+            areaStyle: {
+              color: 'rgba(127,95,132,.3)',
+              opacity: 1,
+              shadowBlur: 45,
+              shadowColor: 'rgba(0,0,0,.5)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 15
+            }
+          },
+          indicator: [
+            { name: 'Sales', max: 10000 },
+            { name: 'Administration', max: 20000 },
+            { name: 'Information Technology', max: 20000 },
+            { name: 'Customer Support', max: 20000 },
+            { name: 'Development', max: 20000 },
+            { name: 'Marketing', max: 20000 }
+          ]
+        },
+        legend: {
+          left: 'center',
+          bottom: '10',
+          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
+        },
+        series: [{
+          type: 'radar',
+          symbolSize: 0,
+          areaStyle: {
+            normal: {
+              shadowBlur: 13,
+              shadowColor: 'rgba(0,0,0,.2)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 10,
+              opacity: 1
+            }
+          },
+          data: [
+            {
+              value: [5000, 7000, 12000, 11000, 15000, 14000],
+              name: 'Allocated Budget'
+            },
+            {
+              value: [4000, 9000, 15000, 15000, 13000, 11000],
+              name: 'Expected Spending'
+            },
+            {
+              value: [5500, 11000, 12000, 15000, 12000, 12000],
+              name: 'Actual Spending'
+            }
+          ],
+          animationDuration: 3000
+        }]
+      })
+    },
+    columnChartFn () {
+      const columnChart = echarts.init(document.getElementById('column_show'))
+      columnChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+          left: 'center',
+          bottom: '10',
+          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
         },
         series: [
           {
-            name: '访问来源',
+            name: 'WEEKLY WRITE ARTICLES',
             type: 'pie',
-            radius: ['45%', '60%'],
-            center: ['50%', '65%'],
+            roseType: 'radius',
+            radius: [15, 95],
+            center: ['50%', '38%'],
             data: [
-              { value: 300, name: '奇趣事' },
-              { value: 100, name: '会生活' },
-              { value: 260, name: '爱旅行' },
-              { value: 180, name: '趣美味' }
-            ]
+              { value: 320, name: 'Industries' },
+              { value: 240, name: 'Technology' },
+              { value: 149, name: 'Forex' },
+              { value: 100, name: 'Gold' },
+              { value: 59, name: 'Forecasts' }
+            ],
+            animationEasing: 'cubicInOut',
+            animationDuration: 2600
           }
         ]
-      }
-      oPie.setOption(oPieopt)
+      })
     },
-    // 设置底部柱状图
-    columnChartFn () {
-      const oColumn = echarts.init(document.getElementById('column_show'))
-      const oColumnopt = {
-        title: {
-          text: '文章访问量',
-          left: 'center',
-          top: '10'
-        },
+    zeChartFn () {
+      const animationDuration = 6000
+
+      const zeChart = echarts.init(document.getElementById('ze_show'))
+      zeChart.setOption({
         tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['奇趣事', '会生活', '爱旅行', '趣美味'],
-          top: '40'
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            mark: { show: true },
-            dataView: { show: true, readOnly: false },
-            magicType: { show: true, type: ['line', 'bar'] },
-            restore: { show: true },
-            saveAsImage: { show: true }
+          trigger: 'axis',
+          axisPointer: { // 坐标轴指示器，坐标轴触发有效
+            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
           }
+        },
+        grid: {
+          top: 10,
+          left: '2%',
+          right: '2%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [{
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          axisTick: {
+            alignWithLabel: true
+          }
+        }],
+        yAxis: [{
+          type: 'value',
+          axisTick: {
+            show: false
+          }
+        }],
+        series: [{
+          name: 'pageA',
+          type: 'bar',
+          stack: 'vistors',
+          barWidth: '60%',
+          data: [79, 52, 200, 334, 390, 330, 220],
+          animationDuration
+        }, {
+          name: 'pageB',
+          type: 'bar',
+          stack: 'vistors',
+          barWidth: '60%',
+          data: [80, 52, 200, 334, 390, 330, 220],
+          animationDuration
+        }, {
+          name: 'pageC',
+          type: 'bar',
+          stack: 'vistors',
+          barWidth: '60%',
+          data: [30, 52, 200, 334, 390, 330, 220],
+          animationDuration
+        }]
+      })
+    },
+    botChartFn () {
+      const botChart = echarts.init(document.getElementById('column1_show'))
+      botChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
         },
         xAxis: [
           {
             type: 'category',
-            data: ['1月', '2月', '3月', '4月', '5月']
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
           }
         ],
         yAxis: [
           {
-            name: '访问量',
             type: 'value'
           }
         ],
         series: [
           {
-            name: '奇趣事',
+            name: 'Direct',
             type: 'bar',
-            barWidth: 20,
-            areaStyle: { type: 'default' },
-            itemStyle: {
-              color: '#fd956a'
+            emphasis: {
+              focus: 'series'
             },
-            data: [800, 708, 920, 1090, 1200]
+            data: [320, 332, 301, 334, 390, 330, 320]
           },
           {
-            name: '会生活',
+            name: 'Email',
             type: 'bar',
-            barWidth: 20,
-            areaStyle: { type: 'default' },
-            itemStyle: {
-              color: '#2bb6db'
+            stack: 'Ad',
+            emphasis: {
+              focus: 'series'
             },
-            data: [400, 468, 520, 690, 800]
+            data: [120, 132, 101, 134, 90, 230, 210]
           },
           {
-            name: '爱旅行',
+            name: 'Union Ads',
             type: 'bar',
-            barWidth: 20,
-            areaStyle: { type: 'default' },
-            itemStyle: {
-              color: '#13cfd5'
+            stack: 'Ad',
+            emphasis: {
+              focus: 'series'
             },
-            data: [500, 668, 520, 790, 900]
+            data: [220, 182, 191, 234, 290, 330, 310]
           },
           {
-            name: '趣美味',
+            name: 'Video Ads',
             type: 'bar',
-            barWidth: 20,
-            areaStyle: { type: 'default' },
-            itemStyle: {
-              color: '#00ce68'
+            stack: 'Ad',
+            emphasis: {
+              focus: 'series'
             },
-            data: [600, 508, 720, 890, 1000]
-          }
-        ],
-        grid: {
-          show: true,
-          x: 50,
-          x2: 30,
-          y: 80,
-          height: 260
-        },
-        dataZoom: [ // 给x轴设置滚动条
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
           {
-            start: 0, // 默认为0
-            end: 100 - 1000 / 31, // 默认为100
-            type: 'slider',
-            show: true,
-            xAxisIndex: [0],
-            handleSize: 0, // 滑动条的 左右2个滑动条的大小
-            height: 8, // 组件高度
-            left: 45, // 左边的距离
-            right: 50, // 右边的距离
-            bottom: 26, // 右边的距离
-            handleColor: '#ddd', // h滑动图标的颜色
-            handleStyle: {
-              borderColor: '#cacaca',
-              borderWidth: '1',
-              shadowBlur: 2,
-              background: '#ddd',
-              shadowColor: '#ddd'
+            name: 'Search Engine',
+            type: 'bar',
+            data: [862, 1018, 964, 1026, 1679, 1600, 1570],
+            emphasis: {
+              focus: 'series'
+            },
+            markLine: {
+              lineStyle: {
+                type: 'dashed'
+              },
+              data: [[{ type: 'min' }, { type: 'max' }]]
             }
+          },
+          {
+            name: 'Baidu',
+            type: 'bar',
+            barWidth: 5,
+            stack: 'Search Engine',
+            emphasis: {
+              focus: 'series'
+            },
+            data: [620, 732, 701, 734, 1090, 1130, 1120]
+          },
+          {
+            name: 'Google',
+            type: 'bar',
+            stack: 'Search Engine',
+            emphasis: {
+              focus: 'series'
+            },
+            data: [120, 132, 101, 134, 290, 230, 220]
+          },
+          {
+            name: 'Bing',
+            type: 'bar',
+            stack: 'Search Engine',
+            emphasis: {
+              focus: 'series'
+            },
+            data: [60, 72, 71, 74, 190, 130, 110]
+          },
+          {
+            name: 'Others',
+            type: 'bar',
+            stack: 'Search Engine',
+            emphasis: {
+              focus: 'series'
+            },
+            data: [62, 82, 91, 84, 109, 110, 120]
           }
         ]
-      }
-      oColumn.setOption(oColumnopt)
+      })
+    },
+    async initAllCount () {
+      const { data: post } = await getPostCount()
+      const { data: cate } = await getCateCount()
+      const { data: comment } = await getCommentCount()
+      if (post.status !== 200) return this.$message.error(post.message)
+      if (cate.status !== 200) return this.$message.error(cate.message)
+      if (cate.status !== 200) return this.$message.error(comment.message)
+      this.postCount = post.data
+      this.cateCount = cate.data
+      this.commentCount = comment.data
     }
   }
 }
@@ -410,16 +598,50 @@ export default {
 }
 
 .gragh_pannel {
-  height: 350px;
+  height: 500px;
   border: 1px solid #e7e7e9;
   background-color: #fff !important;
   margin-bottom: 20px;
 }
-
+.sales_pannel {
+  width: 542px;
+  height: 300%;
+}
 .column_pannel {
   margin-bottom: 20px;
   height: 400px;
   border: 1px solid #e7e7e9;
   background-color: #fff !important;
+}
+
+.el-card {
+  margin:0 20px;
+  margin-bottom: 32px;
+}
+
+::v-deep .el-card__body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  i {
+    font-size: 48px;
+  }
+  b {
+      color: rgba(0,0,0,.45);
+      font-size: 16px;
+      font-weight: 700;
+  }
+  .card-panel-num {
+    color: #666;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 20px 0 10px 0;
+  }
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>

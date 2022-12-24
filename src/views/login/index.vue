@@ -63,11 +63,11 @@ export default {
   },
   methods: {
     // 咉射
-    ...mapMutations(['updateToken']),
+    ...mapMutations(['updateToken', 'updateUserInfo']),
     submitForm () {
       this.$refs.ruleForm.validate(async valid => {
         if (!valid) return this.$message.error('登陆格式错误')
-        if (this.getToken !== '') {
+        if (this.getToken !== null) {
           this.$router.push('/')
           return this.$message.info('不能重复登陆')
         }
@@ -75,6 +75,7 @@ export default {
         if (res.status !== 200) return this.$message.error(res.message)
         this.$notify.success(res.message)
         this.updateToken(res.token)
+        this.updateUserInfo(res.data)
         this.$router.push('/')
       })
     }

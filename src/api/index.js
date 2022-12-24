@@ -24,3 +24,24 @@ export const getMenuListAPI = () => {
     method: 'get'
   })
 }
+
+export const getPostCount = () => {
+  return request({
+    url: '/api/posts/count',
+    method: 'get'
+  })
+}
+
+export const getCateCount = () => {
+  return request({
+    url: '/api/category/count',
+    method: 'get'
+  })
+}
+
+export const getCommentCount = () => {
+  return request({
+    url: '/api/comment/getAllCommentsCount',
+    method: 'get'
+  })
+}

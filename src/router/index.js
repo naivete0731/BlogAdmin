@@ -12,7 +12,20 @@ const routes = [
     children: [
       {
         path: 'home',
-        component: () => import('@/views/home')
+        component: () => import('@/views/home'),
+        meta: { title: '首页' }
+      }
+    ]
+  },
+  {
+    path: '/roleprofile',
+    meta: { title: '用户管理' },
+    component: () => import('@/views/layout'),
+    children: [
+      {
+        path: 'adduser',
+        component: () => import('@/views/roleprofile/AddUser'),
+        meta: { title: '添加管理员' }
       }
     ]
   },
@@ -29,17 +42,18 @@ const router = new VueRouter({
   routes
 })
 
-const whiteList = ['/login']
+// const whiteList = ['/login']
 
 router.beforeEach((to, from, next) => {
   const token = vuex.state.token
   if (token) {
-    if (token && !vuex.state.userInfo.nickname) {
-      vuex.dispatch('getUserInfoActions')
-    }
+    // if (token && !vuex.state.userInfo.nickname) {
+    //   vuex.dispatch('getUserInfoActions')
+    // }
     next()
   } else {
-    if (whiteList.includes(to.path)) {
+    // if (whiteList.includes(to.path)) {
+    if (to.path === '/login') {
       next()
     } else {
       next('/login')

@@ -1,185 +1,225 @@
 <template>
-  <el-container class="main-container">
-    <!-- 头部区域 -->
-    <el-header>
-      <!-- 左侧的 logo -->
-      <img src="../../assets/images/logo.png" alt="" />
-      <!-- 右侧的菜单 -->
-      <el-menu
-        class="el-menu-top"
-        mode="horizontal"
-        background-color="#23262E"
-        text-color="#fff"
-        active-text-color="#409EFF"
-      >
-        <el-submenu index="1">
-          <template slot="title">
-            <!-- 头像 -->
-            <img v-if="user_pic" :src="user_pic" class="avatar" alt="">
-            <img v-else src="../../assets/images/logo.png" alt="" class="avatar" />
-            <span>个人中心</span>
-          </template>
-          <el-menu-item index="1-1"><i class="el-icon-s-operation"></i>基本资料</el-menu-item>
-          <el-menu-item index="1-2"><i class="el-icon-camera"></i>更换头像</el-menu-item>
-          <el-menu-item index="1-3"><i class="el-icon-key"></i>重置密码</el-menu-item>
-        </el-submenu>
-        <el-menu-item index="2" @click="quitFn"><i class="el-icon-switch-button"></i>退出</el-menu-item>
-      </el-menu>
-    </el-header>
-    <el-container>
-      <!-- 侧边栏区域 -->
-      <el-aside width="200px">
-        <!-- 侧边栏-用户信息区域 -->
-        <div class="user-box">
-          <img v-if="user_pic" :src="user_pic" alt="" >
-          <img v-else src="@/assets/images/logo.png" alt="" >
-          <span>欢迎 {{ nickname || username }}</span>
-        </div>
-        <!-- 侧边栏导航-菜单 -->
-        <el-menu
-      :default-active="$route.path"
-      class="el-menu-vertical-demo"
-      unique-opened
-      router
-      background-color="#23262E"
-      text-color="#fff"
-      active-text-color="#409EFF">
-      <template v-for="item in menus">
-        <el-menu-item v-if="!item.children" :index="item.indexPath" :key="item.itemPath">
-          <i :class="item.icon"></i>
-          <span>{{ item.title }}</span>
-        </el-menu-item>
-      <el-submenu v-else :index="item.indexPath" :key="item.indexPath">
+<el-container class="main-container">
+  <el-aside :class="!isCollapse ? '': 'min-aside'">
+
+<!-- 侧边栏区域 -->
+<el-scrollbar style="height:100%">
+
+    <el-menu
+    :default-active="$route.path"
+    class="el-menu-vertical-demo"
+    :collapse="isCollapse"
+    router
+    unique-opened
+    :collapse-transition="false"
+        mode="vertical"
+    background-color="rgb(48, 65, 86)"
+    text-color="rgb(191, 203, 217)"
+    active-text-color="rgb(64, 158, 255)"
+    >
+    <template v-for="item in menus">
+      <el-menu-item v-if="item.items.length === 0" :index="item.indexPath" :key="item._id">
+        <i class="el-icon-user-solid"></i>
+        <span>{{ item.title }}</span>
+      </el-menu-item>
+      <el-submenu v-else :index="item._id" :key="item.createAt">
         <template slot="title">
-          <i :class="item.icon"></i>
-          <span>{{ item.title }}</span>
-        </template>
-        <el-menu-item v-for="obj, index in item.children" :index="obj.indexPath" :key="index">
-          <i :class="obj.icon"></i>
-          <span>{{ obj.title }}</span>
-        </el-menu-item>
-      </el-submenu>
+        <i class="el-icon-user-solid"></i>
+        <span>{{ item.title }}</span>
       </template>
 
+          <el-menu-item v-for="obj, index in item.items" :index="item.indexPath + obj.indexPath" :key="index">
+            <i class="el-icon-user-solid"></i>
+            <span>{{ obj.title }}</span>
+          </el-menu-item>
+      </el-submenu>
+    </template>
     </el-menu>
-      </el-aside>
-      <el-container>
-        <!-- 页面主体区域 -->
-        <el-main>
-          <!-- 路由挂载点 -->
-         <router-view></router-view>
-        </el-main>
-        <!-- 底部 footer 区域 -->
-        <el-footer>© www.itheima.com - 黑马程序员</el-footer>
-      </el-container>
-    </el-container>
+  </el-scrollbar>
+  </el-aside>
+  <el-container>
+    <el-header>
+    <div class="left-container" style="display:flex">
+      <div class="hamburger-container" @click="isCollapse=!isCollapse"><i class="el-icon-s-fold icon-warp"></i></div>
+      <el-breadcrumb separator="/">
+      <el-breadcrumb-item v-for="(item, index) in levelList" :key="index" >
+        <router-link v-if="index === 0" to="/home">
+          {{ item.meta.title }}
+        </router-link>
+        <span v-else>{{ item.meta.title }}</span>
+      </el-breadcrumb-item>
+  <!-- </transition-group> -->
+      </el-breadcrumb>
+    </div>
+  <div class="avatar-container">
+
+    <el-dropdown trigger="click" size="mini">
+     <div>
+      <el-avatar shape="square"   :src="baseURL +  UserInfo.avatar.replace(/^public/, '')"></el-avatar>
+     <i class="el-icon-caret-bottom"></i>
+     </div>
+
+      <el-dropdown-menu slot="dropdown">
+        <router-link to="/roleprofile/userinfo">
+          <el-dropdown-item >个人中心</el-dropdown-item>
+        </router-link>
+        <router-link to="/home">
+          <el-dropdown-item to="/home">首页</el-dropdown-item>
+        </router-link>
+        <el-dropdown-item divided @click.native="quit()">退出</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+  </div>
+    </el-header>
+    <el-main>
+      <router-view></router-view>
+    </el-main>
+    <el-footer>Footer</el-footer>
   </el-container>
+</el-container>
 
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-// import { userInfoAPI } from '@/api'
 import { getMenuListAPI } from '@/api'
-// 在组件标签上绑定的所有事件(包括原生事件的名字，input等等)
-// 都是自定义事件，都需要组件内的$emit来触发才行
-// 万一组件内不支持原生时间码名字
-// 解决：@事件名.native="methods里方法名"
-// .native给组件内根标签，绑定这个原生的事件
+import { mapGetters } from 'vuex'
+import { baseURL } from '@/utils/request'
 export default {
-  name: 'my-layout',
+  name: 'LayoutVue',
   data () {
     return {
-      menus: []
+      menus: [],
+      isCollapse: false,
+      levelList: null,
+      baseURL
     }
   },
   methods: {
-    quitFn () {
+    async getMenuList () {
+      const { data: res } = await getMenuListAPI()
+      if (res.status !== 200) return this.$message.error('侧边栏获取失败')
+      this.menus = res.data
+      console.log(this.$route)
+    },
+    getBreadcrumb () {
+      // only show routes with meta.title
+      let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
+      const first = matched[0]
+
+      if (!this.isDashboard(first)) {
+        matched = [{ path: '/home', meta: { title: '首页' } }].concat(matched)
+      }
+
+      this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
+    },
+    isDashboard (route) {
+      const name = route && route.name
+      if (!name) {
+        return false
+      }
+      return name.trim().toLocaleLowerCase() === '首页'.toLocaleLowerCase()
+    },
+    quit () {
       this.$confirm('退出登录，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.commit('updateToken', '')
+        this.$store.commit('updateToken', null)
         this.$store.commit('updateUserInfo', {})
         this.$router.push('/login')
-        this.$message.success('退出成功')
+        this.$notify.success('退出成功')
       }).catch(() => {
-        this.$message.error('取消登录')
+
       })
-    },
-    // 请求侧边栏数据
-    async getMenuListFn () {
-      const { data: res } = await getMenuListAPI()
-      console.log(res)
-      this.menus = res.data
     }
   },
   created () {
-    // userInfoAPI(.then((res) => console.log(res))
-    // this.$store.dispatch('getUserInfoActions')
-    this.getMenuListFn()
+    this.getMenuList()
+    this.getBreadcrumb()
+  },
+  watch: {
+    $route (route) {
+      this.getBreadcrumb()
+    }
   },
   computed: {
-    ...mapGetters(['username', 'nickname', 'user_pic'])
+    ...mapGetters(['UserInfo'])
   }
+
 }
 </script>
 
 <style lang="less" scoped>
-.main-container {
-  height: 100%;
-  .el-header,
-  .el-aside {
-    background-color: #23262e;
+  .main-container {
+    height: 100%;
+    .el-header {
+      background-color: #fff;
+      height: 50px !important;
+      display: flex;
+      line-height: 50px;
+      justify-content: space-between;
+      .hamburger-container {
+        cursor: pointer;
+        .icon-warp {
+        font-size: 20px;
+        cursor: pointer;
+      }
+      }
+
+      .avatar-container {
+        line-height:78px;
+        cursor: pointer;
+      }
+    }
+    .el-aside {
+      background: rgb(48, 65, 86);
+      width: 210px!important;
+      // color: rgb(191, 203, 217);
+      transition: all ease-in-out .2s;
+    }
+    .el-main {
+      background: rgb(240, 242, 245);
+    }
+    .min-aside {
+    width: 64px !important;
   }
-  .el-header {
-    padding: 0;
-    display: flex;
-    justify-content: space-between;
   }
-  .el-main {
-    overflow-y: scroll;
-    height: 0;
-    background-color: #F2F2F2;
+  .el-menu-vertical-demo:not(.el-menu--collapse) {
+    width: 210px;
+    min-height: 400px;
   }
-  .el-footer {
-    background-color: #eee;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+  .el-menu {
+    // height: 100%;
+    border-right: 0;
   }
+
+::v-deep .el-scrollbar__wrap
+{
+  overflow-x: hidden !important;
+
+}
+.el-breadcrumb {
+  line-height: 46px;
+  margin-left: 20px;
 }
 
-.avatar {
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  background-color: #fff;
-  margin-right: 10px;
-  object-fit: cover;
-}
+.fade-enter,
+  .fade-leave-to{
+    opacity: 0;
+  }
+  .fade-enter-active,
+  .fade-leave-active{
+    transition: opacity .5s;
+  }
 
-.user-box {
-  height: 70px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-  user-select: none;
-  img {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background-color: #fff;
-    margin-right: 15px;
-    object-fit: cover;
-  }
-  span {
-    color: white;
+  .el-icon-caret-bottom {
+    color: #5a5e66;
     font-size: 12px;
+    margin-left: 5px;
   }
-}
+  .el-dropdown-menu {
+    top: 50px !important;
+  }
 </style>
