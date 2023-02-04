@@ -40,6 +40,23 @@ const routes = [
     ]
   },
   {
+    path: '/category',
+    meta: { title: '分类管理' },
+    component: () => import('@/views/layout'),
+    children: [
+      {
+        path: 'addcate',
+        component: () => import('@/views/category/AddCate'),
+        meta: { title: '添加分类' }
+      },
+      {
+        path: 'catelist',
+        component: () => import('@/views/category/CateList'),
+        meta: { title: '分类列表' }
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login')
   }

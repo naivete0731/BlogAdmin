@@ -126,3 +126,51 @@ export const delUserInfo = (id) => {
     method: 'delete'
   })
 }
+
+// 添加分类
+export const addCate = ({ title, className }) => {
+  return request({
+    url: '/api/category',
+    method: 'post',
+    data: {
+      title,
+      className
+    }
+  })
+}
+
+// 获取所有分类
+export const getAllCate = () => {
+  return request({
+    url: '/api/category',
+    method: 'get'
+  })
+}
+
+// 根据ID查询分类
+export const getByIdCate = (id) => {
+  return request({
+    url: '/api/category/' + id,
+    method: 'get'
+  })
+}
+
+// 修改分类
+export const updateCate = ({ _id, title, className }) => {
+  return request({
+    url: '/api/category/' + _id,
+    method: 'put',
+    data: {
+      title,
+      className
+    }
+  })
+}
+
+// 删除分类
+export const delCate = (id) => {
+  return request({
+    url: '/api/category/' + id,
+    method: 'delete'
+  })
+}
