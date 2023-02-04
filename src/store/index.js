@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import { getByIdAdmin } from '@/api'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -26,6 +27,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // 获取用户信息
+    async getUserInfoActions (state) {
+      const { data: res } = await getByIdAdmin(state.state.userInfo._id)
+      if (res.status === 200) {
+        state.commit('updateUserInfo', res.data)
+      }
+    }
   },
   modules: {
   },

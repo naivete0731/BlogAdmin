@@ -26,6 +26,16 @@ const routes = [
         path: 'adduser',
         component: () => import('@/views/roleprofile/AddUser'),
         meta: { title: '添加管理员' }
+      },
+      {
+        path: 'userlist',
+        component: () => import('@/views/roleprofile/UserList'),
+        meta: { title: '管理员列表' }
+      },
+      {
+        path: 'repwd',
+        component: () => import('@/views/roleprofile/RePwd'),
+        meta: { title: '修改密码' }
       }
     ]
   },

@@ -45,3 +45,84 @@ export const getCommentCount = () => {
     method: 'get'
   })
 }
+
+// 获取管理员列表
+export const getAdminAll = () => {
+  return request({
+    url: '/api/users/',
+    method: 'get'
+  })
+}
+
+// 根据id获取管理员信息
+export const getByIdAdmin = (id) => {
+  return request({
+    url: '/api/users/' + id,
+    method: 'get'
+  })
+}
+
+// 图片上传
+export const upload = (file) => {
+  return request({
+    url: '/api/upload',
+    method: 'post',
+    data: file
+  })
+}
+
+/**
+ * 添加管理员
+ * @param {*} param0
+ * @returns 对象
+ */
+export const addAdmin = ({ username, email, password, status, avatar, role }) => {
+  return request({
+    url: '/api/users',
+    method: 'post',
+    data: {
+      username,
+      email,
+      password,
+      status,
+      avatar,
+      role
+    }
+  })
+}
+
+// 修改管理员信息
+export const updatedInfo = ({ _id, username, email, status, avatar, role }) => {
+  return request({
+    url: '/api/users/' + _id,
+    method: 'put',
+    data: {
+      username,
+      email,
+      status,
+      avatar,
+      role
+    }
+  })
+}
+
+// 修改管理员密码
+export const resetPwd = ({ userPass, newPass, confirmPass }) => {
+  return request({
+    url: '/api/users/password',
+    method: 'put',
+    data: {
+      userPass,
+      newPass,
+      confirmPass
+    }
+  })
+}
+
+// 删除管理员
+export const delUserInfo = (id) => {
+  return request({
+    url: '/api/users/' + id,
+    method: 'delete'
+  })
+}

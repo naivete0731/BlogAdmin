@@ -1,5 +1,5 @@
 <template>
-  <div class="body">
+  <div class="body"  >
     <div class="bgc"></div>
       <div class="main-box">
 <!-- <transition name="fade" mode="out-in">
@@ -19,7 +19,7 @@
            <el-input v-model="loginForm.username" placeholder="请输入令牌"></el-input>
          </el-form-item>
          <el-form-item prop="password" label-width="0">
-          <el-input v-model="loginForm.password" placeholder="请输入密钥" show-password ></el-input>
+          <el-input v-model="loginForm.password" @keyup.enter.native="submitForm" placeholder="请输入密钥" show-password></el-input>
          </el-form-item>
          <el-button type="primary" @click="submitForm()" style="width:100%">立即登陆</el-button>
          </el-form>
@@ -67,7 +67,7 @@ export default {
     submitForm () {
       this.$refs.ruleForm.validate(async valid => {
         if (!valid) return this.$message.error('登陆格式错误')
-        if (this.getToken !== null) {
+        if (this.getToken !== null && this.getToken !== '') {
           this.$router.push('/')
           return this.$message.info('不能重复登陆')
         }

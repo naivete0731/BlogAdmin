@@ -17,6 +17,10 @@
     text-color="rgb(191, 203, 217)"
     active-text-color="rgb(64, 158, 255)"
     >
+    <el-menu-item index="/home">
+      <i class="el-icon-s-home"></i>
+      <span>首页</span>
+    </el-menu-item>
     <template v-for="item in menus">
       <el-menu-item v-if="item.items.length === 0" :index="item.indexPath" :key="item._id">
         <i class="el-icon-user-solid"></i>
@@ -125,7 +129,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.commit('updateToken', null)
+        this.$store.commit('updateToken', '')
         this.$store.commit('updateUserInfo', {})
         this.$router.push('/login')
         this.$notify.success('退出成功')
