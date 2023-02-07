@@ -249,3 +249,48 @@ export const EditPost = ({ _id, title, state, content, category, thumbnail }) =>
     }
   })
 }
+
+// 侧边栏模块
+
+// 添加侧边栏
+export const AddMenu = ({ title, icon, indexPath, parentMenuId }) => {
+  return request({
+    url: '/api/menus/',
+    method: 'post',
+    data: {
+      title,
+      icon,
+      indexPath,
+      parentMenuId
+    }
+  })
+}
+
+// 根据ID查询侧边栏信息
+export const getByIdMenu = (id) => {
+  return request({
+    url: '/api/menus/' + id,
+    method: 'get'
+  })
+}
+
+// 修改侧边栏
+export const updateMenu = ({ _id, title, icon, indexPath, parentMenuId }) => {
+  return request({
+    url: '/api/menus/' + _id,
+    method: 'put',
+    data: {
+      title,
+      icon,
+      indexPath,
+      parentMenuId
+    }
+  })
+}
+// 删除侧边栏
+export const delMenu = (id) => {
+  return request({
+    url: '/api/menus/' + id,
+    method: 'delete'
+  })
+}

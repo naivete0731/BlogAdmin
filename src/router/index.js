@@ -68,6 +68,30 @@ const routes = [
     ]
   },
   {
+    path: 'setting',
+    meta: { title: '博客配置' },
+    component: () => import('@/views/layout'),
+    redirect: '/setting/config',
+    childrenw: [
+      {
+        path: 'config',
+        component: () => import('@/views/setting/Config')
+      }
+    ]
+  },
+  {
+    path: '/menus',
+    meta: { title: '侧边栏管理' },
+    component: () => import('@/views/layout'),
+    redirect: '/menus/setting',
+    children: [
+      {
+        path: 'setting',
+        component: () => import('@/views/menu/Setting')
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login')
   }
