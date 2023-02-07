@@ -57,6 +57,17 @@ const routes = [
     ]
   },
   {
+    path: '/post',
+    meta: { title: '文章管理' },
+    component: () => import('@/views/layout'),
+    children: [
+      {
+        path: 'postlist',
+        component: () => import('@/views/post/PostList')
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('@/views/login')
   }

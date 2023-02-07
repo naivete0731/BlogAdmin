@@ -119,6 +119,8 @@ export const resetPwd = ({ userPass, newPass, confirmPass }) => {
   })
 }
 
+// 分类管理
+
 // 删除管理员
 export const delUserInfo = (id) => {
   return request({
@@ -172,5 +174,78 @@ export const delCate = (id) => {
   return request({
     url: '/api/category/' + id,
     method: 'delete'
+  })
+}
+
+// 文章管理
+
+// 获取所有文章
+export const getAllPost = ({ pagesize, pagenum, category, state }) => {
+  return request({
+    url: '/api/posts',
+    method: 'get',
+    params: {
+      pagesize,
+      pagenum,
+      category,
+      state
+    }
+  })
+}
+
+// 文章筛选
+export const siftPost = (id, state) => {
+  return request({
+    url: '/api/posts/category/' + id,
+    method: 'get',
+    params: {
+      state
+    }
+  })
+}
+
+// 文章删除
+export const delPost = (id) => {
+  return request({
+    url: '/api/posts/' + id,
+    method: 'delete'
+  })
+}
+
+// 发布文章
+export const AddPost = ({ title, state, content, category, thumbnail }) => {
+  return request({
+    url: '/api/posts/',
+    method: 'post',
+    data: {
+      title,
+      state,
+      content,
+      category,
+      thumbnail
+    }
+  })
+}
+
+// 根据ID查询文章
+export const GetByIdPost = (id) => {
+  return request({
+    url: '/api/posts/' + id,
+    method: 'get'
+  })
+}
+
+// 修改文章
+export const EditPost = ({ _id, title, state, content, category, thumbnail }) => {
+  return request({
+    url: '/api/posts/' + _id,
+    method: 'put',
+    data: {
+      title,
+      state,
+      content,
+      category,
+      thumbnail
+    }
   })
 }
