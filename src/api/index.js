@@ -250,6 +250,32 @@ export const EditPost = ({ _id, title, state, content, category, thumbnail }) =>
   })
 }
 
+// 博客配置
+
+// 获取配置项
+export const getConfig = () => {
+  return request({
+    url: '/api/settings',
+    method: 'get'
+  })
+}
+
+// 更新配置项
+export const updateConfig = ({ logo, title, keyword, describe, comment, review, register }) => {
+  return request({
+    url: '/api/settings/',
+    method: 'post',
+    data: {
+      logo,
+      title,
+      keyword,
+      describe,
+      comment,
+      review,
+      register
+    }
+  })
+}
 // 侧边栏模块
 
 // 添加侧边栏

@@ -68,11 +68,11 @@ const routes = [
     ]
   },
   {
-    path: 'setting',
+    path: '/setting',
     meta: { title: '博客配置' },
     component: () => import('@/views/layout'),
     redirect: '/setting/config',
-    childrenw: [
+    children: [
       {
         path: 'config',
         component: () => import('@/views/setting/Config')
