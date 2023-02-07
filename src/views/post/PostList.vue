@@ -123,12 +123,12 @@
      width="80%"
      @close="resetFileds"
      >
-     <el-form :model="EditPostForm" :rules="AddPostFormRules" ref="EditPostRef" label-width="100px">
+     <el-form :model="AddPostForm" :rules="AddPostFormRules" ref="EditPostRef" label-width="100px">
     <el-form-item label="文章标题" prop="title">
-      <el-input v-model="EditPostForm.title" placeholder="请输入文章标题"></el-input>
+      <el-input v-model="AddPostForm.title" placeholder="请输入文章标题"></el-input>
     </el-form-item>
     <el-form-item label="文章分类" prop="category">
-      <el-select v-model="EditPostForm.category._id" placeholder="请选择文章分类">
+      <el-select v-model="AddPostForm.category._id" placeholder="请选择文章分类">
         <!-- <el-option
         :label="EditPostForm.category.title"
         :value="EditPostForm.category._id"
@@ -144,17 +144,17 @@
       <!-- 富文本编辑器 -->
       <quill-editor
       @blur="EditcontentChange"
-      v-model="EditPostForm.content"
+      v-model="AddPostForm.content"
       >
       </quill-editor>
     </el-form-item>
     <el-form-item label="文章封面">
        <!-- 用来显示封面的图片 -->
-       <img v-if="!EditPostForm.thumbnail" @click="selCoverFn" class="the_img cover-img" src="../../assets/images/avatar.jpg" alt="" ref="imgsRef" />
-          <img v-else :src="baseURL + EditPostForm.thumbnail.replace(/^public/, '')" @click="selCoverFn" class="the_img cover-img" alt="图片" ref="imgsRef">
+       <img v-if="!AddPostForm.thumbnail" @click="selCoverFn" class="the_img cover-img" src="../../assets/images/avatar.jpg" alt="" ref="imgRef" />
+          <img v-else :src="baseURL + AddPostForm.thumbnail.replace(/^public/, '')" @click="selCoverFn" class="the_img cover-img" alt="图片" ref="imgRef">
       <br />
        <!-- 文件选择框，默认被隐藏 -->
-      <input @change="EditchangeCoverFn" type="file" style="display: none;" accept="image/*" ref="iptFileRef" />
+      <input @change="changeCoverFn" type="file" style="display: none;" accept="image/*" ref="iptFileRef" />
         <!-- 选择封面的按钮 -->
       <!-- <el-button type="text" @click="selCoverFn">+ 选择封面</el-button> -->
     </el-form-item>
@@ -322,11 +322,11 @@ export default {
     },
     changeCoverFn (e) {
       const files = e.target.files
+      console.log(files)
       if (files.length === 0) {
         this.AddPostForm.thumbnail = null
         this.$refs.imgRef.setAttribute('src', imgObj)
       } else {
-        this.AddPostForm.thumbnail = files[0]
         // 把图片文件，要显示到img标签里
         const url = URL.createObjectURL(files[0])
         this.$refs.imgRef.setAttribute('src', url)
@@ -381,19 +381,23 @@ export default {
       }, 2000)
       if (isEdit) {
         // console.log(typeof this.EditPostForm.thumbnail !== typeof 'String')
-        if (typeof this.EditPostForm.thumbnail !== typeof 'String') {
+        // if (typeof this.AddPostForm.thumbnail !== typeof 'String') {
+        if (!this.uploadFile.type) {
+          console.log('没有属性')
+        } else {
           const fd = new FormData()
-          fd.append('file', this.EditPostForm.thumbnail)
+          fd.append('file', this.uploadFile)
           const { data: res } = await upload(fd)
           if (res.status !== 201) return this.$notify.error('头像上传失败')
-          this.EditPostForm.thumbnail = res.data.path
+          this.AddPostForm.thumbnail = res.data.path
+        // }
         }
       } else {
         // if (!this.AddPostForm.thumbnail.type) {
         //   console.log('没有属性')
         // } else {
         const fd = new FormData()
-        fd.append('file', this.AddPostForm.thumbnail)
+        fd.append('file', this.uploadFile)
         const { data: res } = await upload(fd)
         if (res.status !== 201) return this.$notify.error('头像上传失败')
         this.AddPostForm.thumbnail = res.data.path
@@ -401,7 +405,7 @@ export default {
       }
 
       if (isEdit) {
-        const { data: res } = await EditPost(this.EditPostForm)
+        const { data: res } = await EditPost(this.AddPostForm)
         if (res.status !== 200) return this.$notify.error('修改信息失败')
         this.$notify.success('修改成功')
         this.EditDialogVisible = false
@@ -422,9 +426,9 @@ export default {
     },
     resetFileds () {
       this.$refs.EditPostRef.resetFields()
-      this.EditPostForm.thumbnail = null
-      this.EditPostForm.author = null
-      this.EditPostForm.createAt = null
+      this.AddPostForm.thumbnail = null
+      this.AddPostForm.author = null
+      this.AddPostForm.createAt = null
     },
     // 编辑对话框
     async EditPost (id) {
@@ -432,9 +436,10 @@ export default {
       if (res.status !== 200) return this.$notify.error(res.message)
       this.EditDialogVisible = true
       this.$nextTick(() => {
-        this.EditPostForm = res.data
-        this.EditPostForm._id = res.data._id
+        this.AddPostForm = res.data
+        this.AddPostForm._id = res.data._id
       })
+      this.uploadFile = {}
     }
   }
 }
