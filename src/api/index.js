@@ -250,6 +250,84 @@ export const EditPost = ({ _id, title, state, content, category, thumbnail }) =>
   })
 }
 
+// 评论管理
+
+// 获取所有评论
+export const getComment = () => {
+  return request({
+    url: '/api/comment',
+    method: 'get'
+  })
+}
+
+// 添加评论
+export const AddComment = ({ author, content, post, parentCommentId, state }) => {
+  return request({
+    url: '/api/comment/',
+    method: 'post',
+    params: {
+      id: post
+    },
+    data: {
+      author: {
+        nickName: author.nickName,
+        email: author.email,
+        page: author.page,
+        avatar: author.avatar
+      },
+      content,
+      post,
+      parentCommentId,
+      state
+    }
+  })
+}
+// 更新评论状态
+export const UpCommentState = (id) => {
+  return request({
+    url: '/api/comment/' + id,
+    method: 'put'
+  })
+}
+
+// 删除评论
+export const DelComment = (id) => {
+  return request({
+    url: '/api/comment/' + id,
+    method: 'delete'
+  })
+}
+// 轮播管理
+
+// 获取所有轮播
+export const GetSlide = () => {
+  return request({
+    url: '/api/slide',
+    method: 'get'
+  })
+}
+
+// 添加轮播
+export const AddSlide = ({ title, image, link, author }) => {
+  return request({
+    url: '/api/slide',
+    method: 'post',
+    data: {
+      title,
+      image,
+      link,
+      author
+    }
+  })
+}
+
+// 删除轮播
+export const DelSlide = (id) => {
+  return request({
+    url: '/api/slide/' + id,
+    method: 'delete'
+  })
+}
 // 博客配置
 
 // 获取配置项

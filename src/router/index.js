@@ -68,6 +68,28 @@ const routes = [
     ]
   },
   {
+    path: '/comment',
+    meta: { title: '评论管理' },
+    component: () => import('@/views/layout'),
+    children: [
+      {
+        path: 'commentlist',
+        component: () => import('@/views/comment/')
+      }
+    ]
+  },
+  {
+    path: '/slide',
+    meta: { title: '轮播管理' },
+    component: () => import('@/views/layout'),
+    children: [
+      {
+        path: 'slidelist',
+        component: () => import('@/views/slide')
+      }
+    ]
+  },
+  {
     path: '/setting',
     meta: { title: '博客配置' },
     component: () => import('@/views/layout'),

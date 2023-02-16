@@ -531,7 +531,7 @@ export default {
       if (cate.status !== 200) return this.$message.error(comment.message)
       this.postCount = post.data
       this.cateCount = cate.data
-      this.commentCount = comment.data
+      this.commentCount = comment.data.commentCount
     }
   }
 }
