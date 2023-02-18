@@ -262,12 +262,10 @@ export const getComment = () => {
 
 // 添加评论
 export const AddComment = ({ author, content, post, parentCommentId, state }) => {
+  const id = post
   return request({
-    url: '/api/comment/',
+    url: '/api/comment/' + id,
     method: 'post',
-    params: {
-      id: post
-    },
     data: {
       author: {
         nickName: author.nickName,
@@ -290,6 +288,13 @@ export const UpCommentState = (id) => {
   })
 }
 
+// 获取文章内的评论
+export const GetPostListComment = (id) => {
+  return request({
+    url: '/api/comment/' + id,
+    method: 'get'
+  })
+}
 // 删除评论
 export const DelComment = (id) => {
   return request({

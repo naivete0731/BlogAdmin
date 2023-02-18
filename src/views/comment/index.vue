@@ -61,7 +61,8 @@
   title="提示"
   :visible.sync="dialogVisible"
   width="50%"
-  :before-close="handleClose">
+  @close="handleClose"
+  >
   <el-form :model="CommentForm" :rules="CommentFormRules" ref="CommentRef" label-width="100px">
     <el-form-item label="昵称" prop="author.nickName">
       <el-input v-model="CommentForm.author.nickName" placeholder="请输入文章标题"></el-input>
@@ -80,7 +81,7 @@
       </quill-editor>
     </el-form-item>
     <el-form-item label="文章">
-      <el-select v-model="CommentForm.post" placeholder="请选择文章分类">
+      <el-select @change="SelectPost" v-model="CommentForm.post" placeholder="请选择文章列表">
         <el-option v-for="obj in PostList"
         :key="obj._id"
         :label="obj.title"
@@ -89,31 +90,31 @@
       </el-select>
     </el-form-item>
     <el-form-item label="回复">
-      <el-select v-model="CommentForm.parentCommentId" placeholder="请选择文章分类">
-        <el-option v-for="obj in CommentList.records"
+      <el-select v-model="CommentForm.parentCommentId" placeholder="请选择回复对象">
+        <el-option v-for="obj in SelectComment"
         :key="obj._id"
         :label="obj.author.nickName"
         :value="obj._id"
         ></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item>
-    <el-button type="info" @click="dialogVisible = false">取消</el-button>
-
-    <el-button type="primary" @click="AddValid(0)">确定</el-button>
-    </el-form-item>
   </el-form>
+  <span slot="footer" class="dialog-footer">
+       <el-button @click="dialogVisible = false">取 消</el-button>
+       <el-button type="primary" @click="AddComment()">确 定</el-button>
+     </span>
 </el-dialog>
   </div>
 </template>
 
 <script>
-import { getComment, UpCommentState, DelComment, getAllPost } from '@/api'
+import { getComment, UpCommentState, DelComment, getAllPost, GetPostListComment, AddComment } from '@/api'
 export default {
   name: 'COmmentList',
   data () {
     return {
       CommentList: [],
+      SelectComment: [],
       PostList: [],
       dialogVisible: false,
       CommentForm: {
@@ -190,7 +191,25 @@ export default {
       }
     },
     handleClose () {
+      this.$refs.CommentRef.resetFields()
+    },
+    // 当选择了文章后触发
+    async SelectPost () {
+      const { data: res } = await GetPostListComment(this.CommentForm.post)
+      if (res.status !== 200) return this.$notify.error(res.message)
+      this.SelectComment = res.data
+    },
+    AddComment () {
+      this.$refs.CommentRef.validate(async valid => {
+        if (!valid) return this.$notify.error('校验不通过')
 
+        this.CommentForm.author.avatar = `https://q1.qlogo.cn/g?b=qq&nk=${this.CommentForm.author.email}&s=100&t=time()`
+        const { data: res } = await AddComment(this.CommentForm)
+        if (res.status !== 201) return this.$notify.error(res.message)
+        this.$notify.success('添加成功')
+        this.dialogVisible = false
+        this.getComment()
+      })
     }
   }
 }
