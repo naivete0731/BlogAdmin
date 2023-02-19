@@ -116,6 +116,10 @@ const routes = [
   {
     path: '/login',
     component: () => import('@/views/login')
+  },
+  {
+    path: '/error',
+    component: () => import('@/views/error')
   }
 ]
 
@@ -129,6 +133,12 @@ const router = new VueRouter({
 // const whiteList = ['/login']
 
 router.beforeEach((to, from, next) => {
+  if (to.matched.length === 0) { // 如果未匹配到路由
+    from.name ? next({ name: from.name }) : next('/error')
+  } else {
+    next() // 如果匹配到正确跳转
+  }
+
   const token = vuex.state.token
   if (token) {
     // if (token && !vuex.state.userInfo.nickname) {
